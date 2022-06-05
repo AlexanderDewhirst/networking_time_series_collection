@@ -4,6 +4,17 @@
 This application collects local port and network packet time series data and stores the data locally. With a Cronjob, the data is collected while the computer is unlocked and active.
 
 
+## Architecture
+The application consists of a Python script which is scheduled regularly to collect port occupancy and network packet time series data. Each job starts a new round, effectively batching the collected time series data. For each round, two classes overriding an instance of `threading.Thread` in the directory `/threads` {`ScannerThread` and `SnifferThread`} are called. These call the respective services in directory `/services` (`scanner` and `Sniffer`). Each Thread class then stores the data in the SQLite3 database.
+
+### Date Structure
+Rounds ( id, start_time )
+Ports ( id, value )
+RoundsPorts ( id, round_id, port_id, timestamp )
+Packets ( id timestamp, protocols, qry_name, resp_name, port_id, dest_port, payload, round_id )
+<!-- Separate Packet record per protocol -->
+
+
 ## Getting Started
 Clone the repository and navigate to the directory of choice and install the dependencies with:
 ```
@@ -28,10 +39,6 @@ and use the following syntax to schedule the job:
 */1 * * * * ~/<path_to_repository>/run.sh
 ```
 and ensure the `run.sh` file is executable (`chmod 777 run.sh`)
-
-
-## Architecture
-The application consists of a Python script which is scheduled regularly to collect port occupancy and network packet time series data. Each job starts a new round, effectively batching the collected time series data. For each round, two classes overriding an instance of `threading.Thread` in the directory `/threads` {`ScannerThread` and `SnifferThread`} are called. These call the respective services in directory `/services` (`scanner` and `Sniffer`). Each Thread class then stores the data in the SQLite3 database.
 
 
 ## Dependencies
