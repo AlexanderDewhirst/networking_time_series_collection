@@ -5,7 +5,7 @@ This application collects local port and network packet time series data and sto
 
 
 ## Architecture
-The application includes both a data collection phase and neural network modeling phase: 
+The application includes both a data collection phase and neural network modeling phase:
 
 The data collection phase consists of a Python script which is scheduled regularly to collect port occupancy and network packet time series data. Each job starts a new round, effectively batching the collected time series data. For each round, two classes overriding an instance of `threading.Thread` in the directory `/threads` {`ScannerThread` and `SnifferThread`} are called. These call the respective services in directory `/services` (`scanner` and `Sniffer`). Each Thread class then stores the data in the SQLite3 database.
 
@@ -31,7 +31,7 @@ This requires Wireshark to be installed as well.
 To initialize the SQLite3 database, execute the following:
 `sqlite3 -init ~/<path_to_repository>/init.sql ports.db ""`
 
-Unfortunately, SQLite does not support native variable syntax. Therefore,eeding the database is done at the application layer.
+Unfortunately, SQLite does not support native variable syntax. Therefore, seeding the database is done at the application layer.
 <!-- Seed DB -->
 
 ### Cronjob Scheduling
@@ -79,6 +79,14 @@ Develop a server application to manage client participation in the neural networ
 
 ### Data Cleanup Worker
 Data is retained indefinitely on the host machine (unless the database process is killed) and should be removed after considered stale.
+
+
+### CLI
+Create a CLI tool to allow for specific use cases.
+
+
+### Data Security
+Use and secure credentials for the client application to write to the database on the host machine.
 
 
 ### Packets
