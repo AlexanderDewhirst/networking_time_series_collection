@@ -1,7 +1,7 @@
 import threading
 from datetime import datetime
 import time
-from helpers import db
+from db import helpers as db
 from services.ports.scanner import Scanner
 
 class ScannerThread(threading.Thread):

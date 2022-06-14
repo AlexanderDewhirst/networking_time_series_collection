@@ -1,5 +1,4 @@
 import pyshark
-import sqlite3
 from datetime import datetime
 
 class Sniffer:
@@ -47,8 +46,8 @@ class Sniffer:
         elif 'remaining_payload' in quic_layer.field_names:
           packet_info['payload'] = quic_layer.remaining_payload
 
-      if packet_info['protocols'] == []:
-        print(packet)
+      # if packet_info['protocols'] == []:
+      #   print(packet)
       else:
         self.ports.append(packet_info)
     return self.ports

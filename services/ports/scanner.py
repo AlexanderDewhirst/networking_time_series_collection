@@ -1,5 +1,4 @@
 import socket
-from helpers import db
 
 class Scanner:
   def __init__(self):

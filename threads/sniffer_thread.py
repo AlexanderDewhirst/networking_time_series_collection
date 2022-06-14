@@ -1,5 +1,5 @@
 import threading
-from helpers import db
+from db import helpers as db
 from services.ports.sniffer import Sniffer
 
 class SnifferThread(threading.Thread):

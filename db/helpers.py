@@ -26,12 +26,18 @@ def insert_many(conn, query, params):
     print(e)
     print(query)
 
-def select(conn, query, params):
+def select(conn, query, params = None):
   try:
     c = conn.cursor()
-    c.execute(query, params)
+    if params:
+      if "%s" in query:
+        c.execute(query % params)
+      else:
+        c.execute(query, params)
+    else:
+      c.execute(query)
     conn.commit()
-    return c.fetchall()[0]
+    return c.fetchall()
   except sqlite3.Error as e:
     print(e)
     print(query)
