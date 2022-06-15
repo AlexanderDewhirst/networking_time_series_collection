@@ -19,7 +19,7 @@ Ports ( id, value )
 
 RoundsPorts ( id, round_id, port_id, timestamp )
 
-Packets ( id timestamp, protocols, qry_name, resp_name, port_id, dest_port, payload, round_id )
+Packets ( id, timestamp, protocols, qry_name, resp_name, port_id, dest_port, payload, round_id )
 <!-- Separate Packet record per protocol -->
 
 
@@ -33,12 +33,12 @@ This requires Wireshark to be installed as well.
 ### SQLite Initialization
 To initialize the SQLite3 database, execute the following:
 ```
-sqlite3 -init ~/<path_to_repository>/init.sql ports.db ""
+sqlite3 -init init.sql ports.db ""
 ```
 
 Unfortunately, SQLite does not support native variable syntax. Therefore, seeding the database is done at the application layer.
 ```
-python3 ~/<path_to_repository>/app/db/reset.py
+python3 app/db/reset.py
 ```
 
 ### Cronjob Scheduling
@@ -48,7 +48,7 @@ crontab -e
 ```
 and use the following syntax to schedule the job:
 ```
-*/1 * * * * ~/<path_to_repository>/run.sh
+*/1 * * * * run.sh
 ```
 and ensure the `run.sh` file is executable (`chmod 777 run.sh`)
 
@@ -58,7 +58,7 @@ The cron job will initialize the database at the root. See *dependencies* for ac
 ### Neural Network Modeling
 Once data is collected and stored in the database, we can then train our neural network. To do so, execute the following:
 ```
-python3 ~/<path_to_repository>/port_detector.py
+python3 app/port_detector.py
 ```
 This may take a few minutes.
 
