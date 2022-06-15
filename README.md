@@ -1,4 +1,4 @@
-# Client Application
+# Client Application - Anomaly Detection in Port Consumption using a Federated CNN-LSTM-AE (Neural Network) Architecture 
 
 ## Introduction
 This application collects local port and network packet time series data and stores the data locally. The data is collected using a cron job while the host machine is active.
@@ -9,7 +9,7 @@ The application includes both a data collection phase and neural network modelin
 
 The data collection phase consists of a Python script which is scheduled regularly to collect port occupancy and network packet time series data. Each job starts a new round, effectively batching the collected time series data. For each round, two classes overriding an instance of `threading.Thread` in the directory `/threads` {`ScannerThread` and `SnifferThread`} are called. These call the respective services in directory `/services` (`scanner` and `Sniffer`). Each Thread class then stores the data in the SQLite3 database.
 
-The neural network modeling phase uses a convolutional neural network (CNN), a recurrent neural network (RNN), and an autoencoder (AE). The CNN extracts local features in port usage. The RNN, which uses Long Short-Term Memory (LMTM) network, extracts temporal features in port usage. Finally, the AE compresses and decompresses the data in order to generalize features to detect anomalies for unlabeled data.
+The neural network modeling phase uses a convolutional neural network (CNN), a recurrent neural network (RNN), and an autoencoder (AE). The CNN extracts local features in port usage. The RNN, which uses Long Short-Term Memory (LMTM) network, extracts temporal features in port usage. Finally, the AE compresses and decompresses the data in order to generalize features and detect anomalies with unlabeled data.
 
 
 ### Data Structure
