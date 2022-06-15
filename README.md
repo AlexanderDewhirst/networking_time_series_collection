@@ -20,7 +20,7 @@ Packets ( id timestamp, protocols, qry_name, resp_name, port_id, dest_port, payl
 <!-- Separate Packet record per protocol -->
 
 
-## Getting Started
+## Getting Started - Host Machine
 Clone the repository and navigate to the directory of choice and install the dependencies with:
 ```
 pip3 install -r requirements.txt
@@ -29,10 +29,14 @@ This requires Wireshark to be installed as well.
 
 ### SQLite Initialization
 To initialize the SQLite3 database, execute the following:
-`sqlite3 -init ~/<path_to_repository>/init.sql ports.db ""`
+```
+sqlite3 -init ~/<path_to_repository>/init.sql ports.db ""
+```
 
 Unfortunately, SQLite does not support native variable syntax. Therefore, seeding the database is done at the application layer.
-<!-- Seed DB -->
+```
+python3 ~/<path_to_repository>/app/db/reset.py
+```
 
 ### Cronjob Scheduling
 Setup a cronjob with:
@@ -45,9 +49,31 @@ and use the following syntax to schedule the job:
 ```
 and ensure the `run.sh` file is executable (`chmod 777 run.sh`)
 
+### Neural Network Modeling
+Once data is collected and stored in the database, we can then train our neural network. To do so, execute the following:
+```
+python3 ~/<path_to_repository>/port_detector.py
+```
+This may take a few minutes.
+
+
+## Getting Started - Docker (WIP)
+Clone the repository and navigate to the directory of choice. Build the docker image with
+```
+docker build -t port_monitor .
+```
+
+We can then start the container using out new image with
+```
+docker run -it -d --net=host port_monitor
+```
+
+##### Limitations
+1. Mapping the network from the host machine is not supported by Windows.
+2. Installing Wireshark is required on the host machine. Only Linux allows commands from the Dockerfile to setup Wireshark on the host. This will not be supported.
+
 
 ## Dependencies
-
 ### PyShark
 The Python library `pyshark` is used to sniff packets with LiveCapture. The capture packets include protocols TCP, DNS, QUIC, and UDP on the `en0` interface.
 
@@ -68,11 +94,6 @@ To access the SQLite console, simply connect to the database with:
 
 
 ## Future State
-
-### Docker
-Package the client application in a Docker container for the ability to run on any operating system. This would require mapping all ports from the host machine to the container, executing the cron job within the container, and storing data within a database in the container. Required dependencies installed in the container include the libraries above plus Wireshark.
-
-
 ### Server Application
 Develop a server application to manage client participation in the neural network usage (training and evaluation), aggregating weights from the client models at time t + 1 using Stochastic Parallel Gradient Descent (SPGD).
 
