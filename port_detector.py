@@ -104,29 +104,19 @@ plt.ylabel('MSLE Loss')
 plt.legend(['loss', 'val_loss'])
 plt.show()
 
-train_metrics = model.evaluate(ports_train, ports_train)
-test_metrics = model.evaluate(ports_test, ports_test)
+ports_train_pred = model.predict(ports_train)
+train_mae_loss = np.mean(np.abs(ports_train_pred - ports_train), axis = 1)
 
-print(model.metrics_names)
-print(train_metrics)
-print(test_metrics)
+plt.hist(train_mae_loss, bins = 50)
+plt.xlabel("Train MAE Loss")
+plt.ylabel("Sample Size")
+plt.show()
 
-# def find_threshold(model, x_train):
-#   reconstructions = model.predict(x_train)
-#   reconstruction_errors = tf.keras.losses.msle(reconstructions, x_train)
-#   threshold = np.mean(reconstruction_errors.numpy()) \
-#       + np.std(reconstruction_errors.numpy())
-#   return threshold
+threshold = np.max(train_mae_loss)
+print("Reconstruction error threshold: ", threshold)
 
-# def get_predictions(model, x_test, threshold):
-#   predictions = model.predict(x_test)
-#   errors = tf.keras.losses.msle(predictions, x_test)
-#   anomaly_mask = pd.Series(errors) > threshold
-#   preds = anomaly_mask.map(lambda x: 0.0 if x == True else 1.0)
-#   return preds
+plt.plot(ports_train[0])
+plt.plot(ports_train_pred[0])
+plt.show()
 
-# threshold = find_threshold(model, ports_train)
-# print(f"Threshold: {threshold}")
-# errors = get_predictions(model, ports_test, threshold)
-# print("Insample Error (MSLE): {}".format(errors))
-# accuracy_score(predictions, ports_test)
+# Test data to be collected on another client.
