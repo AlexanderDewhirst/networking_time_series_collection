@@ -12,7 +12,7 @@ The data collection phase consists of a Python script which is scheduled regular
 The neural network modeling phase uses a convolutional neural network (CNN), a recurrent neural network (RNN), and an autoencoder (AE). The CNN extracts local features in port usage. The RNN, which uses Long Short-Term Memory (LMTM) network, extracts temporal features in port usage. Finally, the AE compresses and decompresses the data in order to generalize features to detect anomalies for unlabeled data.
 
 
-### Date Structure
+### Data Structure
 Rounds ( id, start_time )
 Ports ( id, value )
 RoundsPorts ( id, round_id, port_id, timestamp )
