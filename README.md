@@ -14,8 +14,11 @@ The neural network modeling phase uses a convolutional neural network (CNN), a r
 
 ### Data Structure
 Rounds ( id, start_time )
+
 Ports ( id, value )
+
 RoundsPorts ( id, round_id, port_id, timestamp )
+
 Packets ( id timestamp, protocols, qry_name, resp_name, port_id, dest_port, payload, round_id )
 <!-- Separate Packet record per protocol -->
 
@@ -48,6 +51,9 @@ and use the following syntax to schedule the job:
 */1 * * * * ~/<path_to_repository>/run.sh
 ```
 and ensure the `run.sh` file is executable (`chmod 777 run.sh`)
+
+##### NOTE
+The cron job will initialize the database at the root. See *dependencies* for accessing the database console.
 
 ### Neural Network Modeling
 Once data is collected and stored in the database, we can then train our neural network. To do so, execute the following:
