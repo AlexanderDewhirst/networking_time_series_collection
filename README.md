@@ -61,6 +61,12 @@ and use the following syntax to schedule the job:
 ```
 and both files are executable (ex. `chmod +x app/port_collector.py`).
 
+The logs from the cron execution can be saved in a log file with the following syntax
+```
+python3 app/port_collector.py >> collector.log 2>&1
+```
+The files `collector.log` and `detector.log` are ignored from Git for this purpose.
+
 ##### NOTES
 1. The cron job will initialize the database at the root. See *dependencies* for accessing the database console.
 2. Configuration of the PATH environment variable to allow cron to use the latest version of Python might be required. The Live Capture functionality from `pyshark` requires a recent version of Python and PIP.
@@ -112,6 +118,9 @@ The Python library `scikit-learn` allows us to split the data into training and 
 
 ### Matplotlib
 The Python library `matplotlib` is a plotting library that allows us to visualize our model and data.
+
+### Python Dotenv
+The Python library `python-dotenv` loads environment variables necessary for development.
 
 ## Future State
 ### Federation

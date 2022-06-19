@@ -2,3 +2,5 @@ collector.log
 detector.log
 
 app/files/cnn_lstm_ae-weights.h5
+
+.env

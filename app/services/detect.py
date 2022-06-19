@@ -10,6 +10,8 @@ from models.cnn_lstm_ae import CnnLstmAe
 class Detect():
   def __init__(self, conn):
     self.conn = conn
+    self.model = None
+    self.model_file_path = self.get_weight_file()
 
   def __call__(self):
     rounds = self.__get_rounds()
@@ -18,54 +20,13 @@ class Detect():
     ports_per_round = self.port_usage_per_round(port_usage, rounds)
 
     # Create model
-    pbounds_default = {
-      'conv_filters': 32,
-      'conv_kernel_size': 128,
-      'activation': 'relu',
-      'pool_size': 32,
-      'dropout': 0.05,
-      'lstm_nodes': 32,
-      'ae_code_size': 16,
-      'learning_rate': 0.001
-    }
-    model_file_path = self.get_weight_file()
-    if os.path.exists(model_file_path):
-      model_file = model_file_path
-    else:
-      model_file = None
-
-    model = CnnLstmAe(model_file)
-    model = model(ports_per_round, pbounds_default)
+    self.build(ports_per_round)
 
     # Predict anomalies with trained model
-    pred = model.predict(ports_per_round)
-    train_mae_loss = np.mean(np.abs(pred - ports_per_round), axis = 1)
-    threshold = np.max(train_mae_loss)
-    print("Reconstruction error threshold: ", threshold)
+    self.predict(ports_per_round)
 
     # Train model with latest weights
-    ports_train, ports_test = train_test_split(ports_per_round, test_size = 0.2, train_size = 0.8)
-
-    early_stopping = tf.keras.callbacks.EarlyStopping(
-      monitor = "val_loss",
-      patience = 2,
-      mode = "min"
-    )
-    model_checkpoint = tf.keras.callbacks.ModelCheckpoint(
-      filepath = model_file_path,
-      save_weights_only = True,
-      verbose = 1
-    )
-
-    model.fit(
-      ports_train,
-      ports_train,
-      epochs = 20,
-      batch_size = 10,
-      validation_data = (ports_test, ports_test),
-      callbacks = [early_stopping, model_checkpoint]
-    )
-    model.save(model_file_path)
+    self.train(ports_per_round)
 
 
   def port_usage_per_round(self, port_usage, rounds):
@@ -90,13 +51,63 @@ class Detect():
 
   @staticmethod
   def get_config_file():
-    p = os.getcwd()
+    p = '~/Documents/Code/bu/cs767/port_monitor'
     return p + '/app/files/cnn_lstm_ae-config.npy'
 
   @staticmethod
   def get_weight_file():
-    p = os.getcwd()
+    p = os.environ.get('ROOT_PATH') or ''
     return p + '/app/files/cnn_lstm_ae-weights.h5'
+
+  def build(self, ports_per_round):
+    if os.path.exists(self.model_file_path):
+      model_file = self.model_file_path
+    else:
+      model_file = None
+
+    pbounds_default = {
+      'conv_filters': 32,
+      'conv_kernel_size': 128,
+      'activation': 'relu',
+      'pool_size': 32,
+      'dropout': 0.05,
+      'lstm_nodes': 32,
+      'ae_code_size': 16,
+      'learning_rate': 0.001
+    }
+    self.model = CnnLstmAe(model_file)
+    self.model = self.model(ports_per_round, pbounds_default)
+
+  def predict(self, ports_per_round):
+    pred = self.model.predict(ports_per_round)
+    mae_loss = np.mean(np.abs(pred - ports_per_round), axis = 1)
+    threshold = np.max(mae_loss)
+    print("Reconstruction error threshold: ", threshold)
+    print(zip(mae_loss >= threshold, mae_loss))
+
+  def train(self, ports_per_round):
+    ports_train, ports_test = train_test_split(ports_per_round, test_size = 0.2, train_size = 0.8)
+
+    early_stopping = tf.keras.callbacks.EarlyStopping(
+      monitor = "val_loss",
+      patience = 2,
+      mode = "min"
+    )
+    model_checkpoint = tf.keras.callbacks.ModelCheckpoint(
+      filepath = self.model_file_path,
+      save_weights_only = True,
+      verbose = 1
+    )
+
+    self.model.fit(
+      ports_train,
+      ports_train,
+      epochs = 20,
+      batch_size = 10,
+      validation_data = (ports_test, ports_test),
+      callbacks = [early_stopping, model_checkpoint]
+    )
+    self.model.save(self.model_file_path)
 
   def plot_history(self, history):
     plt.plot(history.history['loss'])
@@ -106,8 +117,14 @@ class Detect():
     plt.legend(['loss', 'val_loss'])
     plt.show()
 
-  def plot_model(self, model):
-    tf.keras.utils.plot_model(model, show_shapes = True, to_file = 'model.png')
+  def plot_loss(self, mae_loss):
+    plt.hist(mae_loss, bins = 50)
+    plt.xlabel("Train MAE Loss")
+    plt.ylabel("Sample Size")
+    plt.show()
+
+  def plot_model(self):
+    tf.keras.utils.plot_model(self.model, show_shapes = True, to_file = 'model.png')
     image = plt.imread('model.png')
     plt.imshow(image)
     plt.show()
