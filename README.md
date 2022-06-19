@@ -1,4 +1,4 @@
-# Client Application
+# Client Application - Anomaly Detection in Port Consumption using a Federated CNN-LSTM-AE (Neural Network) Architecture
 
 ## Introduction
 This application collects local port and network packet time series data and stores the data locally. The data is collected using a cron job while the host machine is active.
