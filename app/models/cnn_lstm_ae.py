@@ -1,10 +1,19 @@
 import tensorflow as tf
 
-class CnnRnnAe(tf.keras.Model):
-  def __init__(self):
+class CnnLstmAe(tf.keras.Model):
+  def __init__(self, model_file = None):
     super().__init__()
+    self.model_file = model_file
 
   def call(self, inputs, config):
+    if self.model_file != None:
+      model = tf.keras.models.load_model(self.model_file)
+    else:
+      model = self.build_model(inputs, config)
+
+    return model
+
+  def build_model(self, inputs, config):
     model = tf.keras.models.Sequential()
     model.add(tf.keras.layers.Conv1D(
       filters = config['conv_filters'],

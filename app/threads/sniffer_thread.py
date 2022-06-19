@@ -10,26 +10,22 @@ class SnifferThread(threading.Thread):
     self.round_end = round_end
 
   def run(self):
-    print("Thread2 start")
-
     packets = Sniffer(self.round_end)()
-    print(packets[0])
 
     packet_params = []
     for packet in packets:
-      protocols = ','.join(packet['protocols'])
-      # if packet['srcport'] == None:
-      #   print(packet)
-      packet_params.append((
-        packet['timestamp'],
-        protocols,
-        packet['qry_name'],
-        packet['resp_name'],
-        packet['srcport'],
-        packet['dstport'],
-        packet['payload'],
-        self.current_round,
-      ))
+      if packet['srcport'] != None:
+        protocols = ','.join(packet['protocols'])
+        packet_params.append((
+          protocols,
+          packet['timestamp'],
+          packet['qry_name'],
+          packet['resp_name'],
+          packet['srcport'],
+          packet['dstport'],
+          packet['payload'],
+          self.current_round,
+        ))
 
     insert_packets_query = """
       INSERT INTO packets(
@@ -38,5 +34,3 @@ class SnifferThread(threading.Thread):
       ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
     """
     db.insert_many(self.conn, insert_packets_query, packet_params)
-
-    print("Thread2 end")

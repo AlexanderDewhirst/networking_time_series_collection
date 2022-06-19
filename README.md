@@ -5,12 +5,11 @@ This application collects local port and network packet time series data and sto
 
 
 ## Architecture
-The application includes both a data collection phase and neural network modeling phase:
+The application includes both a network traffic data collection phase and a neural network anomaly detection phase.
 
-The data collection phase consists of a Python script which is scheduled regularly to collect port occupancy and network packet time series data. Each job starts a new round, effectively batching the collected time series data. For each round, two classes overriding an instance of `threading.Thread` in the directory `/threads` {`ScannerThread` and `SnifferThread`} are called. These call the respective services in directory `/services` (`scanner` and `Sniffer`). Each Thread class then stores the data in the SQLite3 database.
+The data collection phase collects port occupancy and network packet time series data. Each job starts a new round, effectively batching the collected time series data.
 
-The neural network modeling phase uses a convolutional neural network (CNN), a recurrent neural network (RNN), and an autoencoder (AE). The CNN extracts local features in port usage. The RNN, which uses Long Short-Term Memory (LMTM) network, extracts temporal features in port usage. Finally, the AE compresses and decompresses the data in order to generalize features to detect anomalies for unlabeled data.
-
+The anomaly detection phase predicts anomalies within batched time series data using a convolutional neural network (CNN), a recurrent neural network (RNN), and an autoencoder (AE). The CNN extracts local features in port usage. The RNN, which uses Long Short-Term Memory (LSTM) network, extracts temporal features in port usage. Finally, the AE compresses and decompresses the data in order to generalize features to detect anomalies for unlabeled data. After evaluating the latest batch using the current weights, the model is further trained using the data for evaluation in the next batch.
 
 ### Data Structure
 Rounds ( id, start_time )
@@ -23,12 +22,21 @@ Packets ( id, timestamp, protocols, qry_name, resp_name, port_id, dest_port, pay
 <!-- Separate Packet record per protocol -->
 
 
+## Architecture
+Two executable scripts to collect network traffic and evaluate port occupancy are scheduled using cron.
+
+The script to collect network traffic runs every minute, and stores port usage and network packets in an in-process database. For each round, two classes overriding an instance of `threading.Thread` in the directory `/threads` (`ScannerThread` and `SnifferThread`) are called. These call the respective services in directory `/services` (`Scanner` and `Sniffer`). Each Thread class then stores the data in the SQLite3 database.
+
+The script to evaluate port occupancy runs every hour, evaluating the latest port usage data using a CNN-LSTM-AE neural network. For each batch, the `keras.engine.Sequential` model stored on the client predicts anomalies by using the reconstruction threshold from the undercomplete autoencoder and then refitted with the data after evaluation, preserving the temporality of time series data and maintaining the model weights.
+
 ## Getting Started - Host Machine
 Clone the repository and navigate to the directory of choice and install the dependencies with:
 ```
 pip3 install -r requirements.txt
 ```
 This requires Wireshark to be installed as well.
+
+Currently, Wireshark is a required dependency and must be installed. To configure Wireshark to allow execution by cron, we have to modify the file `config.ini` in the Wireshark `sitepackages` by adding the correct Python path.
 
 ### SQLite Initialization
 To initialize the SQLite3 database, execute the following:
@@ -48,19 +56,14 @@ crontab -e
 ```
 and use the following syntax to schedule the job:
 ```
-*/1 * * * * run.sh
+*/1 * * * * python3 app/port_collector.py
+0 * * * * python3 app/port_detector.py
 ```
-and ensure the `run.sh` file is executable (`chmod 777 run.sh`)
+and both files are executable (`chmod +x app/port_collector.py`).
 
-##### NOTE
-The cron job will initialize the database at the root. See *dependencies* for accessing the database console.
-
-### Neural Network Modeling
-Once data is collected and stored in the database, we can then train our neural network. To do so, execute the following:
-```
-python3 app/port_detector.py
-```
-This may take a few minutes.
+##### NOTES
+1. The cron job will initialize the database at the root. See *dependencies* for accessing the database console.
+2. Configuration of the PATH environment variable to allow cron to use the latest version of Python might be required. The Live Capture functionality from `pyshark` requires a recent version of Python and PIP.
 
 
 ## Getting Started - Docker (WIP)
@@ -74,7 +77,7 @@ We can then start the container using out new image with
 docker run -it -d --net=host port_monitor
 ```
 
-##### Limitations
+##### LIMITATIONS
 1. Mapping the network from the host machine is not supported by Windows.
 2. Installing Wireshark is required on the host machine. Only Linux allows commands from the Dockerfile to setup Wireshark on the host. This will not be supported.
 
@@ -98,6 +101,17 @@ To access the SQLite console, simply connect to the database with:
 - `.tables` - List tables
 - `.mode list` - Set display mode
 
+### Numpy
+The Python library `numpy` is used to preprocess the stored data into an acceptable data structure for the neural network model.
+
+### Tensorflow
+The Python library `tensorflow` is required to construct the neural network model.
+
+### Scikit-Learn
+The Python library `scikit-learn` allows us to split the data into training and testing datasets.
+
+### Matplotlib
+The Python library `matplotlib` is a plotting library that allows us to visualize our model and data.
 
 ## Future State
 ### Server Application
@@ -107,18 +121,14 @@ Develop a server application to manage client participation in the neural networ
 ### Data Cleanup Worker
 Data is retained indefinitely on the host machine (unless the database process is killed) and should be removed after considered stale.
 
-
 ### CLI
 Create a CLI tool to allow for specific use cases.
-
 
 ### Data Security
 Use and secure credentials for the client application to write to the database on the host machine.
 
-
 ### Packets
 Use the data to help predict anomalies!
-
 
 ## Other Ideas
 ### Generative Adversarial Networks (GANs)

@@ -12,8 +12,6 @@ class ScannerThread(threading.Thread):
     self.round_end = round_end
 
   def run(self):
-    print("Thread1 start")
-
     while datetime.now() < self.round_end:
       ports = Scanner()()
 
@@ -30,6 +28,3 @@ class ScannerThread(threading.Thread):
 
       if datetime.now() < self.round_end:
         time.sleep(5)
-
-    print("Thread1 end")
-

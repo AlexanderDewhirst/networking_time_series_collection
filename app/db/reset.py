@@ -1,4 +1,4 @@
-from db import helpers as db
+import helpers as db
 
 if __name__ == "__main__":
   conn = db.create_connection('ports.db')
