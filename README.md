@@ -59,7 +59,7 @@ and use the following syntax to schedule the job:
 */1 * * * * python3 app/port_collector.py
 0 * * * * python3 app/port_detector.py
 ```
-and both files are executable (`chmod +x app/port_collector.py`).
+and both files are executable (ex. `chmod +x app/port_collector.py`).
 
 ##### NOTES
 1. The cron job will initialize the database at the root. See *dependencies* for accessing the database console.
