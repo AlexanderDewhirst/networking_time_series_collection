@@ -5,11 +5,16 @@ This application collects local port and network packet time series data, stores
 
 
 ## Architecture
-The application includes both a network traffic data collection phase and a neural network anomaly detection phase.
+The application collects network traffic and detects anomalies in port occupancy using cron jobs.
 
-The data collection phase collects port occupancy and network packet time series data. Each job starts a new round, effectively batching the collected time series data.
+The network traffic collector scans for port occupancy and streams network packets on the `en0` interface. Each jobs runs every minute, and stores port usage and network packets in an in-process database. For each round, two classes overriding an instance of `threading.Thread` in the directory `/threads` (`ScannerThread` and `SnifferThread`) are called. These call the respective services in directory `/services` (`Scanner` and `Sniffer`). Each Thread class then stores the data in the SQLite3 database.
 
-The anomaly detection phase predicts anomalies within batched time series data using a convolutional neural network (CNN), a recurrent neural network (RNN), and an autoencoder (AE). The CNN extracts local features in port usage. The RNN, which uses Long Short-Term Memory (LSTM) network, extracts temporal features in port usage. Finally, the AE compresses and decompresses the data in order to generalize features to detect anomalies for unlabeled data. After evaluating the latest batch using the current weights, the model is further trained using the data for evaluation in the next batch.
+![Client - Collector](/docs/collector.png)
+
+The anomaly detector runs every hour and predicts anomalies within batched time series data using a convolutional neural network (CNN), a recurrent neural network (RNN), and an autoencoder (AE). The CNN extracts local features in port usage. The RNN, which uses Long Short-Term Memory (LSTM) network, extracts temporal features in port usage. Finally, the AE compresses and decompresses the data in order to generalize features to detect anomalies for unlabeled data. For each batch, the `keras.engine.Sequential` model stored on the client predicts anomalies by using the reconstruction threshold from the undercomplete autoencoder and then refits with the data after evaluation, preserving the temporality of time series data and maintaining the model weights.
+
+![Client - Detector](/docs/detector.png)
+
 
 ### Data Structure
 Rounds ( id, start_time )
@@ -21,17 +26,6 @@ RoundsPorts ( id, round_id, port_id, timestamp )
 Packets ( id, timestamp, protocols, qry_name, resp_name, port_id, dest_port, payload, round_id )
 <!-- Separate Packet record per protocol -->
 
-
-## Architecture
-Two executable scripts to collect network traffic and evaluate port occupancy are scheduled using cron.
-
-The script to collect network traffic runs every minute, and stores port usage and network packets in an in-process database. For each round, two classes overriding an instance of `threading.Thread` in the directory `/threads` (`ScannerThread` and `SnifferThread`) are called. These call the respective services in directory `/services` (`Scanner` and `Sniffer`). Each Thread class then stores the data in the SQLite3 database.
-
-![Client - Collector](/docs/collector.png)
-
-The script to evaluate port occupancy runs every hour, evaluating the latest port usage data using a CNN-LSTM-AE neural network. For each batch, the `keras.engine.Sequential` model stored on the client predicts anomalies by using the reconstruction threshold from the undercomplete autoencoder and then refitted with the data after evaluation, preserving the temporality of time series data and maintaining the model weights.
-
-![Client - Detector](/docs/detector.png)
 
 ## Getting Started - Host Machine
 Clone the repository and navigate to the directory of choice and install the dependencies with:
