@@ -1,7 +1,7 @@
 # Port Consumption Anomaly Detector Client using CNN-LSTM-AE (Neural Network) Architecture
 
 ## Introduction
-This application collects local port and network packet time series data and stores the data locally. The data is collected using a cron job while the host machine is active.
+This application collects local port and network packet time series data, stores the data on the client, and evaluates anomalies using cron while the host machine is active.
 
 
 ## Architecture
