@@ -1,4 +1,4 @@
-# Client Application - Anomaly Detection in Port Consumption using a Federated CNN-LSTM-AE (Neural Network) Architecture
+# Port Consumption Anomaly Detector Client using CNN-LSTM-AE (Neural Network) Architecture
 
 ## Introduction
 This application collects local port and network packet time series data and stores the data locally. The data is collected using a cron job while the host machine is active.
@@ -114,9 +114,8 @@ The Python library `scikit-learn` allows us to split the data into training and 
 The Python library `matplotlib` is a plotting library that allows us to visualize our model and data.
 
 ## Future State
-### Server Application
-Develop a server application to manage client participation in the neural network usage (training and evaluation), aggregating weights from the client models at time t + 1 using Stochastic Parallel Gradient Descent (SPGD).
-
+### Federation
+Develop a server application to support federation and manage client participation in the neural network usage (training and evaluation), aggregating weights from the client models at time t + 1 using Stochastic Parallel Gradient Descent (SPGD).
 
 ### Data Cleanup Worker
 Data is retained indefinitely on the host machine (unless the database process is killed) and should be removed after considered stale.
