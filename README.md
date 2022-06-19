@@ -27,7 +27,11 @@ Two executable scripts to collect network traffic and evaluate port occupancy ar
 
 The script to collect network traffic runs every minute, and stores port usage and network packets in an in-process database. For each round, two classes overriding an instance of `threading.Thread` in the directory `/threads` (`ScannerThread` and `SnifferThread`) are called. These call the respective services in directory `/services` (`Scanner` and `Sniffer`). Each Thread class then stores the data in the SQLite3 database.
 
+![Client - Collector](/docs/collector.png)
+
 The script to evaluate port occupancy runs every hour, evaluating the latest port usage data using a CNN-LSTM-AE neural network. For each batch, the `keras.engine.Sequential` model stored on the client predicts anomalies by using the reconstruction threshold from the undercomplete autoencoder and then refitted with the data after evaluation, preserving the temporality of time series data and maintaining the model weights.
+
+![Client - Detector](/docs/detector.png)
 
 ## Getting Started - Host Machine
 Clone the repository and navigate to the directory of choice and install the dependencies with:
