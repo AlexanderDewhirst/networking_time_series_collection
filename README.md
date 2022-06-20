@@ -125,6 +125,9 @@ The Python library `python-dotenv` loads environment variables necessary for dev
 ### Federation
 Develop a server application to support federation and manage client participation in the neural network usage (training and evaluation), aggregating weights from the client models at time t + 1 using Stochastic Parallel Gradient Descent (SPGD).
 
+### Bayesian Optimization
+Tune model hyperparameters to optimize our model performance.
+
 ### Data Cleanup Worker
 Data is retained indefinitely on the host machine (unless the database process is killed) and should be removed after considered stale.
 
