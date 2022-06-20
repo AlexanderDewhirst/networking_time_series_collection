@@ -60,7 +60,7 @@ class Detect():
   @staticmethod
   def get_weight_file():
     p = os.environ.get('ROOT_PATH') or ''
-    return p + '/app/files/cnn_lstm_ae-weights.h5'
+    return p + 'app/files/cnn_lstm_ae-weights.h5'
 
   def build(self, ports_per_round):
     if os.path.exists(self.model_file_path):
