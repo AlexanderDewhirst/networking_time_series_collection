@@ -39,12 +39,12 @@ Currently, Wireshark is a required dependency and must be installed. To configur
 ### SQLite Initialization
 To initialize the SQLite3 database, execute the following:
 ```
-sqlite3 -init init.sql ports.db ""
+sqlite3 -init init.sql ~/ports.db ""
 ```
 
 Unfortunately, SQLite does not support native variable syntax. Therefore, seeding the database is done at the application layer.
 ```
-python3 app/db/reset.py
+python3 ~/<path_to_repository>/app/db/reset.py
 ```
 
 ### Cronjob Scheduling
@@ -52,18 +52,19 @@ Setup a cronjob with:
 ```
 crontab -e
 ```
-and use the following syntax to schedule the job:
+and use the following syntax to schedule the job. Cron requires the global path to find the file.
 ```
 */1 * * * * python3 app/port_collector.py
 0 * * * * python3 app/port_detector.py
 ```
-and both files are executable (ex. `chmod +x app/port_collector.py`).
+and both files are executable (ex. `chmod +x app/port_collector.py`). You will likely need to configure cron to use the correct installation of Python. You can swap out `python3` with the result of `which python3`.
 
 The logs from the cron execution can be saved in a log file with the following syntax
 ```
 python3 app/port_collector.py >> collector.log 2>&1
 ```
 The files `collector.log` and `detector.log` are ignored from Git for this purpose.
+We must also give cron full disk access - osxdaily.com/2020/04/27/fix-cron-permissions-macos-full-disk-access/
 
 ##### NOTES
 1. The cron job will initialize the database at the root. See *dependencies* for accessing the database console.
