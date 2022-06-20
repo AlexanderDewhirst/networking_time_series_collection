@@ -15,14 +15,21 @@ The network traffic collector scans for port occupancy and streams network packe
 
 The anomaly detector runs every hour and predicts anomalies within batched time series data using a convolutional neural network (CNN), a recurrent neural network (RNN), and an autoencoder (AE). The CNN extracts local features in port usage. The RNN, which uses Long Short-Term Memory (LSTM) network, extracts temporal features in port usage. Finally, the AE compresses and decompresses the data in order to generalize features to detect anomalies for unlabeled data. For each batch, the `keras.engine.Sequential` model stored on the client predicts anomalies by using the reconstruction threshold from the undercomplete autoencoder and then refits with the data after evaluation, preserving the temporality of time series data and maintaining the model weights.
 
-![Client - Detector](/docs/detector.png)
+<div align='center'>
+  ![Client - Detector](/docs/detector.png)
+</div>
 
 The neural network model architecture uses Keras high-level API to construct layers. The first layer is an input layer followed by a 1-dimensional convolutional layer with the shape defined as the port input space (1 x 65535). A 1-dimensional maximum pooling layer then compresses the local features into a lower dimensional space. Dropout is added to further allow our model to generalize local features. An LSTM layer then allows for our model to realize temporal features in the data. Lastly, we have two dense layers to compress and decompress the data, implementing an under-complete autoencoder, to further generalize and label anomalous behavior.
-![Model Architecture](/docs/model_architecture.png)
+
+<div align='center'>
+  ![Model Architecture](/docs/model_architecture.png)
+</div>
 
 The database consists of four tables: _rounds_, _ports_, _packets_, and _rounds_ports_. This allows for port status data to belong to a particular round for a client, supporting federation. The network packet data also belongs to a particular port and a particular round, associating packets to specific ports and supporting federation.
 
-![Database](/docs/database_design.png)
+<div align='center'>
+  ![Database](/docs/database_design.png)
+</div>
 
 - Rounds ( id, start_time )
 - Ports ( id, value )
