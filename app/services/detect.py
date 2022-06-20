@@ -5,6 +5,7 @@ import matplotlib.pyplot as plt
 from sklearn.model_selection import train_test_split
 from db import helpers as db
 from models.cnn_lstm_ae import CnnLstmAe
+from services.log import Log
 
 
 class Detect():
@@ -15,6 +16,8 @@ class Detect():
 
   def __call__(self):
     rounds = self.__get_rounds()
+    Log("Batch starting [" + str(rounds[0]) + ' - ' + str(rounds[-1]) + ']')
+
     port_usage = self.__get_port_usage(rounds)
 
     ports_per_round = self.port_usage_per_round(port_usage, rounds)
@@ -79,11 +82,12 @@ class Detect():
     self.model = self.model(ports_per_round, pbounds_default)
 
   def predict(self, ports_per_round):
+    Log("Batch model predicting anomalies")
     pred = self.model.predict(ports_per_round)
     mae_loss = np.mean(np.abs(pred - ports_per_round), axis = 1)
     threshold = np.max(mae_loss)
-    print("Reconstruction error threshold: ", threshold)
-    print(zip(mae_loss >= threshold, mae_loss))
+    Log("Reconstruction error threshold: ", threshold)
+    Log(str(zip(mae_loss >= threshold, mae_loss)))
 
   def train(self, ports_per_round):
     ports_train, ports_test = train_test_split(ports_per_round, test_size = 0.2, train_size = 0.8)
@@ -99,6 +103,7 @@ class Detect():
       verbose = 1
     )
 
+    Log("Batch model fitting")
     self.model.fit(
       ports_train,
       ports_train,

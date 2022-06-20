@@ -12,7 +12,7 @@ class Collect():
   def __call__(self):
     round_end = self.round_start + timedelta(0, 60)
     current_round = self.__create_round()
-    Log("Round starting % s".format(str(current_round)))
+    Log("Round starting " + str(current_round))
 
     # Collect network traffic
     thread1 = ScannerThread(self.conn, current_round, round_end)
