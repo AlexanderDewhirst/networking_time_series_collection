@@ -1,3 +1,4 @@
+import os
 import tensorflow as tf
 
 class CnnLstmAe(tf.keras.Model):
@@ -30,3 +31,8 @@ class CnnLstmAe(tf.keras.Model):
     optimizer = tf.keras.optimizers.Adam(learning_rate = config['learning_rate'])
     model.compile(optimizer = optimizer, loss = 'msle', metrics = ['accuracy'])
     return model
+
+  @classmethod
+  def get_weight_file(self):
+    p = os.environ.get('ROOT_PATH') or ''
+    return p + 'app/cnn_lstm_ae-weights.h5'

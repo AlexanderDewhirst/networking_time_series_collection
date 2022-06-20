@@ -12,7 +12,7 @@ class Detect():
   def __init__(self, conn):
     self.conn = conn
     self.model = None
-    self.model_file_path = self.get_weight_file()
+    self.model_file_path = CnnLstmAe.get_weight_file()
 
   def __call__(self):
     rounds = self.__get_rounds()
@@ -31,9 +31,9 @@ class Detect():
     # Train model with latest weights
     self.train(ports_per_round)
 
-
-  def port_usage_per_round(self, port_usage, rounds):
-    ports_per_round = [[] for r in rounds]
+  @staticmethod
+  def port_usage_per_round(port_usage, rounds):
+    ports_per_round = [[] for _ in rounds]
 
     # Create array of unique ports per round
     for record in port_usage:
@@ -51,16 +51,6 @@ class Detect():
 
     ports_per_round = np.vstack(ports_per_round)
     return ports_per_round
-
-  @staticmethod
-  def get_config_file():
-    p = os.environ.get('ROOT_PATH') or ''
-    return p + 'app/cnn_lstm_ae-config.npy'
-
-  @staticmethod
-  def get_weight_file():
-    p = os.environ.get('ROOT_PATH') or ''
-    return p + 'app/cnn_lstm_ae-weights.h5'
 
   def build(self, ports_per_round):
     if os.path.exists(self.model_file_path):
