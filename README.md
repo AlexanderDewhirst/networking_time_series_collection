@@ -34,9 +34,6 @@ Clone the repository and navigate to the directory of choice and install the dep
 ```
 pip3 install -r requirements.txt
 ```
-This requires Wireshark to be installed as well.
-
-Currently, Wireshark is a required dependency and must be installed. To configure Wireshark to allow execution by cron, we have to modify the file `config.ini` in the Wireshark `sitepackages` by adding the correct Python path.
 
 ### SQLite Initialization
 To initialize the SQLite3 database, execute the following:
@@ -59,18 +56,20 @@ and use the following syntax to schedule the job. Cron requires the global path 
 */1 * * * * python3 app/port_collector.py
 0 * * * * python3 app/port_detector.py
 ```
-and both files are executable (ex. `chmod +x app/port_collector.py`). You will likely need to configure cron to use the correct installation of Python. You can swap out `python3` with the result of `which python3`.
+and both files are executable (ex. `chmod +x app/port_collector.py`). 
 
-The logs from the cron execution can be saved in a log file with the following syntax
-```
-python3 app/port_collector.py >> collector.log 2>&1
-```
-The files `collector.log` and `detector.log` are ignored from Git for this purpose.
 We must also give cron full disk access - osxdaily.com/2020/04/27/fix-cron-permissions-macos-full-disk-access/
 
 ##### NOTES
 1. The cron job will initialize the database at the root. See *dependencies* for accessing the database console.
-2. Configuration of the PATH environment variable to allow cron to use the latest version of Python might be required. The Live Capture functionality from `pyshark` requires a recent version of Python and PIP.
+2. You will likely need to configure cron to use the correct installation of Python. You can swap out `python3` with the result of `which python3`.
+3. The logs from the cron execution can be saved in a log file with the following syntax
+```
+python3 app/port_collector.py >> collector.log 2>&1
+```
+The files `collector.log` and `detector.log` are ignored from Git for this purpose.
+4. Configuration of the PATH environment variable to allow cron to use the latest version of Python might be required. The Live Capture functionality from `pyshark` requires a recent version of Python and PIP.
+5. The application will execute without Wireshark and the Sniffer thread streaming network packets to the database. However, we can configure Wireshark to allow execution by cron by modifying the file `dumpcap` path in `config.ini` for `pyshark` within your current Python dependencies (ex. `/usr/local/lib/python3.9/site-packages/pyshark`). The dumpcap path should point to your TShark installation (ex. `dumpcap_path = /Applications/Wireshark.app/Contents/MacOS/tshark`)
 
 
 ## Getting Started - Docker (WIP)
