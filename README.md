@@ -7,23 +7,23 @@ This application collects local port and network packet time series data, stores
 ## Architecture
 The application collects network traffic and detects anomalies in port occupancy using cron jobs.
 
-The network traffic collector scans for port occupancy and streams network packets on the `en0` interface. Each jobs runs every minute, and stores port usage and network packets in an in-process database. For each round, two classes overriding an instance of `threading.Thread` in the directory `/threads` (`ScannerThread` and `SnifferThread`) are called. These call the respective services in directory `/services` (`Scanner` and `Sniffer`). Each Thread class then stores the data in the SQLite3 database.
+The network traffic collector scans for port occupancy and streams network packets on the `en0` interface. Jobs run every minute, with each storing port usage and network packets in an in-process database. For each round, two classes overriding an instance of `threading.Thread` in the directory `/threads` (`ScannerThread` and `SnifferThread`) are called. These call the respective services in directory `/services` (`Scanner` and `Sniffer`). Each Thread class then stores the data in the SQLite3 database.
 
 ![Client - Collector](/docs/collector.png)
 
 The anomaly detector runs every hour and predicts anomalies within batched time series data using a convolutional neural network (CNN), a recurrent neural network (RNN), and an autoencoder (AE). The CNN extracts local features in port usage. The RNN, which uses Long Short-Term Memory (LSTM) network, extracts temporal features in port usage. Finally, the AE compresses and decompresses the data in order to generalize features to detect anomalies for unlabeled data. For each batch, the `keras.engine.Sequential` model stored on the client predicts anomalies by using the reconstruction threshold from the undercomplete autoencoder and then refits with the data after evaluation, preserving the temporality of time series data and maintaining the model weights.
 
 ![Client - Detector](/docs/detector.png)
+![Model Architecture](/docs/model_architecture.png)
 
+The database consists of four tables: _rounds_, _ports_, _packets_, and _rounds_ports_. This allows for port status data to belong to a particular round for a client, supporting federation. The network packet data also belongs to a particular port and a particular round, associating packets to specific ports and supporting federation.
 
-### Data Structure
-Rounds ( id, start_time )
+![Database](/docs/database_design.png)
 
-Ports ( id, value )
-
-RoundsPorts ( id, round_id, port_id, timestamp )
-
-Packets ( id, timestamp, protocols, qry_name, resp_name, port_id, dest_port, payload, round_id )
+- Rounds ( id, start_time )
+- Ports ( id, value )
+- RoundsPorts ( id, round_id, port_id, timestamp )
+- Packets ( id, timestamp, protocols, qry_name, resp_name, port_id, dest_port, payload, round_id )
 <!-- Separate Packet record per protocol -->
 
 
