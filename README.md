@@ -9,7 +9,9 @@ The application collects network traffic and detects anomalies in port occupancy
 
 The network traffic collector scans for port occupancy and streams network packets on the `en0` interface. Jobs run every minute, with each storing port usage and network packets in an in-process database. For each round, two classes overriding an instance of `threading.Thread` in the directory `/threads` (`ScannerThread` and `SnifferThread`) are called. These call the respective services in directory `/services` (`Scanner` and `Sniffer`). Each Thread class then stores the data in the SQLite3 database.
 
-![Client - Collector](/docs/collector.png)
+<div align='center'>
+  ![Client - Collector](/docs/collector.png)
+</div>
 
 The anomaly detector runs every hour and predicts anomalies within batched time series data using a convolutional neural network (CNN), a recurrent neural network (RNN), and an autoencoder (AE). The CNN extracts local features in port usage. The RNN, which uses Long Short-Term Memory (LSTM) network, extracts temporal features in port usage. Finally, the AE compresses and decompresses the data in order to generalize features to detect anomalies for unlabeled data. For each batch, the `keras.engine.Sequential` model stored on the client predicts anomalies by using the reconstruction threshold from the undercomplete autoencoder and then refits with the data after evaluation, preserving the temporality of time series data and maintaining the model weights.
 
