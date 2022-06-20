@@ -86,7 +86,7 @@ class Detect():
     pred = self.model.predict(ports_per_round)
     mae_loss = np.mean(np.abs(pred - ports_per_round), axis = 1)
     threshold = np.max(mae_loss)
-    Log("Reconstruction error threshold: ", threshold)
+    Log("Reconstruction error threshold: " + threshold)
     Log(str(zip(mae_loss >= threshold, mae_loss)))
 
   def train(self, ports_per_round):
