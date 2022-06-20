@@ -54,13 +54,13 @@ class Detect():
 
   @staticmethod
   def get_config_file():
-    p = '~/Documents/Code/bu/cs767/port_monitor'
-    return p + '/app/files/cnn_lstm_ae-config.npy'
+    p = os.environ.get('ROOT_PATH') or ''
+    return p + 'app/cnn_lstm_ae-config.npy'
 
   @staticmethod
   def get_weight_file():
     p = os.environ.get('ROOT_PATH') or ''
-    return p + 'app/files/cnn_lstm_ae-weights.h5'
+    return p + 'app/cnn_lstm_ae-weights.h5'
 
   def build(self, ports_per_round):
     if os.path.exists(self.model_file_path):
