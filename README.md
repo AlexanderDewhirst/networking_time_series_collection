@@ -64,7 +64,7 @@ We must also give cron full disk access - osxdaily.com/2020/04/27/fix-cron-permi
 ##### NOTES
 1. The cron job will initialize the database at the root. See *dependencies* for accessing the database console.
 2. You will likely need to configure cron to use the correct installation of Python. You can swap out `python3` with the result of `which python3`.
-3. The logs from the cron execution can be saved in a log file with the following syntax
+3. The logs from the cron execution can be saved in a log file with the following syntax:
 `python3 app/port_collector.py >> collector.log 2>&1`
 The files `collector.log` and `detector.log` are ignored from Git for this purpose.
 4. Configuration of the PATH environment variable to allow cron to use the latest version of Python might be required. The Live Capture functionality from `pyshark` requires a recent version of Python and PIP.
