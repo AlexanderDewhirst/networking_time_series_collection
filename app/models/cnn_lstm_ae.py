@@ -6,12 +6,14 @@ class CnnLstmAe(tf.keras.Model):
     super().__init__()
     self.model_file = model_file
 
+  def __name__(self):
+    return "CNN LSTM AE"
+
   def call(self, inputs, config):
     if self.model_file != None:
       model = tf.keras.models.load_model(self.model_file)
     else:
       model = self.build_model(inputs, config)
-
     return model
 
   def build_model(self, inputs, config):
@@ -36,3 +38,6 @@ class CnnLstmAe(tf.keras.Model):
   def get_weight_file(self):
     p = os.environ.get('ROOT_PATH') or ''
     return p + 'app/cnn_lstm_ae-weights.h5'
+
+  def set_model_file(self, model_file):
+    self.model_file = model_file

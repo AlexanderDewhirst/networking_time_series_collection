@@ -3,20 +3,25 @@ import numpy as np
 import tensorflow as tf
 import matplotlib.pyplot as plt
 from sklearn.model_selection import train_test_split
+from datetime import datetime
 from db import helpers as db
 from models.cnn_lstm_ae import CnnLstmAe
 from services.log import Log
 
 
 class Detect():
-  def __init__(self, conn):
+  def __init__(self, conn, num_rounds = 60):
     self.conn = conn
-    self.model = None
+    self.model = CnnLstmAe()
     self.model_file_path = CnnLstmAe.get_weight_file()
+    self.num_rounds = num_rounds
+    self.current_batch = self.__create_batch()
 
   def __call__(self):
     rounds = self.__get_rounds()
-    Log("Batch starting [" + str(rounds[0]) + ' - ' + str(rounds[-1]) + ']')
+    self.__create_batch_rounds(rounds)
+
+    Log("Batch " + str(self.current_batch) + " starting - rounds [" + str(rounds[0]) + ' - ' + str(rounds[-1]) + ']')
 
     port_usage = self.__get_port_usage(rounds)
 
@@ -68,11 +73,11 @@ class Detect():
       'ae_code_size': 16,
       'learning_rate': 0.001
     }
-    self.model = CnnLstmAe(model_file)
+    self.model.set_model_file(model_file)
     self.model = self.model(ports_per_round, pbounds_default)
 
   def predict(self, ports_per_round):
-    Log("Batch model predicting anomalies")
+    Log("Batch " + str(self.current_batch) + " predicting anomalies")
     pred = self.model.predict(ports_per_round)
     mae_loss = np.mean(np.abs(pred - ports_per_round), axis = 1)
     threshold = np.max(mae_loss)
@@ -125,9 +130,28 @@ class Detect():
     plt.show()
 
   def __get_rounds(self):
-    rounds = db.select(self.conn, """SELECT id FROM rounds ORDER BY id DESC LIMIT 60;""")
+    # Check batches_rounds. Must ensure uniqueness for processed rounds in each batch.
+    rounds = db.select(self.conn, """SELECT id FROM rounds ORDER BY id DESC LIMIT %s;""", self.num_rounds)
     rounds = tuple(map(lambda x: x[0], rounds))
     return rounds
 
   def __get_port_usage(self, rounds):
     return db.select(self.conn, "SELECT port_id, timestamp, round_id FROM rounds_ports WHERE round_id IN %s;", str(rounds))
+
+  def __create_batch(self):
+    insert_batch_query = """INSERT INTO batches(timestamp, alg) VALUES (?, ?)"""
+    db.insert(self.conn, insert_batch_query, (datetime.now().isoformat(), self.model.__name__()))
+
+    select_batch_query = """SELECT id FROM batches ORDER BY id DESC LIMIT 1"""
+    current_batch = db.select(self.conn, select_batch_query)[0][0]
+    return str(current_batch)
+
+  def __create_batch_rounds(self, rounds):
+    rounds_params = []
+    for round in rounds:
+      rounds_params.append((
+        self.current_batch,
+        str(round)
+      ))
+    insert_batch_rounds_query = """INSERT INTO batches_rounds(batch_id, round_id) VALUES (?, ?)"""
+    db.insert_many(self.conn, insert_batch_rounds_query, rounds_params)

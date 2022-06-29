@@ -30,3 +30,17 @@ CREATE TABLE IF NOT EXISTS packets (
   FOREIGN KEY (port_id) REFERENCES ports(id),
   FOREIGN KEY (round_id) REFERENCES rounds(id)
 );
+
+CREATE TABLE IF NOT EXISTS batches (
+  id integer PRIMARY KEY,
+  timestamp text NOT NULL,
+  alg varchar(255)
+);
+
+CREATE TABLE IF NOT EXISTS batches_rounds (
+  id integer PRIMARY KEY,
+  batch_id integer NOT NULL,
+  round_id integer NOT NULL,
+  FOREIGN KEY (batch_id) REFERENCES batches(id),
+  FOREIGN KEY (round_id) REFERENCES rounds(id)
+);

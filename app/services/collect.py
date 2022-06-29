@@ -5,12 +5,13 @@ from threads.scanner_thread import ScannerThread
 from threads.sniffer_thread import SnifferThread
 
 class Collect():
-  def __init__(self, conn):
+  def __init__(self, conn, round_duration = 60):
     self.conn = conn
     self.round_start = datetime.now()
+    self.round_duration = round_duration
 
   def __call__(self):
-    round_end = self.round_start + timedelta(0, 60)
+    round_end = self.round_start + timedelta(0, self.round_duration)
     current_round = self.__create_round()
     Log("Round starting " + str(current_round))
 

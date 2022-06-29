@@ -23,7 +23,7 @@ class ScannerThread(threading.Thread):
           datetime.now(),
         ))
 
-      insert_rounds_ports_query = """INSERT INTO rounds_ports(round_id, port_id, timestamp) values (?, ?, ?)"""
+      insert_rounds_ports_query = """INSERT INTO rounds_ports(round_id, port_id, timestamp) VALUES (?, ?, ?)"""
       db.insert_many(self.conn, insert_rounds_ports_query, round_port_params)
 
       if datetime.now() < self.round_end:
