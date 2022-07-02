@@ -17,6 +17,8 @@ The anomaly detector runs every hour and predicts anomalies within batched time 
 
 The neural network model architecture uses Keras high-level API to construct layers. The first layer is an input layer followed by a 1-dimensional convolutional layer with the shape defined as the port input space (1 x 65535). A 1-dimensional maximum pooling layer then compresses the local features into a lower dimensional space. Dropout is added to further allow our model to generalize local features. An LSTM layer then allows for our model to realize temporal features in the data. Lastly, we have two dense layers to compress and decompress the data, implementing an under-complete autoencoder, to further generalize and label anomalous behavior.
 
+Lastly, stale data is deleted from the database in order to maintain a small footprint on the client.
+
 ![Model Architecture](/docs/model_architecture.png)
 
 The database consists of four tables: _rounds_, _ports_, _packets_, and _rounds_ports_. This allows for port status data to belong to a particular round for a client, supporting federation. The network packet data also belongs to a particular port and a particular round, associating packets to specific ports and supporting federation.
@@ -56,8 +58,9 @@ and use the following syntax to schedule the job. Cron requires the global path 
 ```
 */1 * * * * python3 app/port_collector.py
 0 * * * * python3 app/port_detector.py
+0 0 * * * python3 app/port_cleanup.py
 ```
-and both files are executable (ex. `chmod +x app/port_collector.py`). 
+and all files are executable (ex. `chmod +x app/port_collector.py`).
 
 We must also give cron full disk access - osxdaily.com/2020/04/27/fix-cron-permissions-macos-full-disk-access/
 
