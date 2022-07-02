@@ -14,4 +14,4 @@ args = parser.parse_args()
 
 if __name__ == "__main__":
   conn = db.create_connection(args.database)
-  Detect(conn, args.model, args.batches_per_round)()
+  Detect(conn, args.batches_per_round)()

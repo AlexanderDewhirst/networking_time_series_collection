@@ -10,9 +10,9 @@ from services.log import Log
 
 
 class Detect():
-  def __init__(self, conn, model, num_rounds = 60):
+  def __init__(self, conn, num_rounds = 60):
     self.conn = conn
-    self.model = model or CnnLstmAe()
+    self.model = CnnLstmAe()
     self.model_file_path = CnnLstmAe.get_weight_file()
     self.num_rounds = num_rounds
     self.current_batch = self.__create_batch()
@@ -131,7 +131,7 @@ class Detect():
 
   def __get_rounds(self):
     # Check batches_rounds. Must ensure uniqueness for processed rounds in each batch.
-    rounds = db.select(self.conn, """SELECT id FROM rounds ORDER BY id DESC LIMIT %s;""", self.num_rounds)
+    rounds = db.select(self.conn, """SELECT id FROM rounds ORDER BY id DESC LIMIT %s;""", str(self.num_rounds))
     rounds = tuple(map(lambda x: x[0], rounds))
 
     processed_rounds = db.select(self.conn, """SELECT round_id FROM batches_rounds WHERE round_id IN %s;""", str(rounds))
