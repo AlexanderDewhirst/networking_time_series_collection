@@ -26,10 +26,10 @@ class Collect():
     Log("Round completed successfully")
 
   def __create_round(self):
-    insert_round_query = """INSERT INTO rounds(start_time) values (?)"""
+    insert_round_query = """INSERT INTO rounds(start_time) values (?);"""
     db.insert(self.conn, insert_round_query, (str(self.round_start.isoformat()),))
 
     # Get round
-    select_round_query = """SELECT id FROM rounds WHERE start_time = ?"""
+    select_round_query = """SELECT id FROM rounds WHERE start_time = ?;"""
     current_round = db.select(self.conn, select_round_query, (str(self.round_start.isoformat()),))[0][0]
     return current_round

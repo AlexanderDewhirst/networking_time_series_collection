@@ -98,7 +98,7 @@ class Detect():
       verbose = 1
     )
 
-    Log("Batch model fitting")
+    Log("Batch " + str(self.current_batch) + " fitting")
     self.model.fit(
       ports_train,
       ports_train,
@@ -133,16 +133,23 @@ class Detect():
     # Check batches_rounds. Must ensure uniqueness for processed rounds in each batch.
     rounds = db.select(self.conn, """SELECT id FROM rounds ORDER BY id DESC LIMIT %s;""", self.num_rounds)
     rounds = tuple(map(lambda x: x[0], rounds))
-    return rounds
+
+    processed_rounds = db.select(self.conn, """SELECT round_id FROM batches_rounds WHERE round_id IN %s;""", str(rounds))
+    processed_rounds = list(map(lambda x: x[0], processed_rounds))
+    new_rounds = []
+    for round in list(rounds):
+      if round not in processed_rounds:
+        new_rounds.append(round)
+    return tuple(new_rounds)
 
   def __get_port_usage(self, rounds):
     return db.select(self.conn, "SELECT port_id, timestamp, round_id FROM rounds_ports WHERE round_id IN %s;", str(rounds))
 
   def __create_batch(self):
-    insert_batch_query = """INSERT INTO batches(timestamp, alg) VALUES (?, ?)"""
+    insert_batch_query = """INSERT INTO batches(timestamp, alg) VALUES (?, ?);"""
     db.insert(self.conn, insert_batch_query, (datetime.now().isoformat(), self.model.__name__()))
 
-    select_batch_query = """SELECT id FROM batches ORDER BY id DESC LIMIT 1"""
+    select_batch_query = """SELECT id FROM batches ORDER BY id DESC LIMIT 1;"""
     current_batch = db.select(self.conn, select_batch_query)[0][0]
     return str(current_batch)
 
@@ -153,5 +160,5 @@ class Detect():
         self.current_batch,
         str(round)
       ))
-    insert_batch_rounds_query = """INSERT INTO batches_rounds(batch_id, round_id) VALUES (?, ?)"""
+    insert_batch_rounds_query = """INSERT INTO batches_rounds(batch_id, round_id) VALUES (?, ?);"""
     db.insert_many(self.conn, insert_batch_rounds_query, rounds_params)

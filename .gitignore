@@ -1,8 +1,10 @@
 __pycache__/
 *.py[cod]
 *$py.class
+*.pyc
 
 collector.log
 detector.log
+cleanup.log
 app/cnn_lstm_ae-weights.h5
 .env

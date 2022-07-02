@@ -6,7 +6,7 @@ def create_connection(filename):
   try:
     conn = sqlite3.connect(filename, check_same_thread = False)
   except sqlite3.Error as e:
-    Log('[' + query + '] ' + str(e))
+    Log(str(e))
   return conn
 
 def insert(conn, query, params):
@@ -40,7 +40,7 @@ def select(conn, query, params = None):
   except sqlite3.Error as e:
     Log('[' + query + '] ' + str(e))
 
-def delete(conn, query, params):
+def delete(conn, query, params = None):
   try:
     c = conn.cursor()
     if params:
@@ -53,7 +53,6 @@ def delete(conn, query, params):
     conn.commit()
   except sqlite3.Error as e:
     Log('[' + query + '] ' + str(e))
-
 
 def seed(conn):
   query = """INSERT INTO ports(value) values (?)"""
@@ -71,4 +70,4 @@ def truncate(conn):
     c.execute("""DELETE FROM batches;""")
     conn.commit()
   except sqlite3.Error as e:
-    Log('[' + query + '] ' + str(e))
+    Log(str(e))

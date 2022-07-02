@@ -11,5 +11,5 @@ from services.collect import Collect
 #
 
 if __name__ == "__main__":
-  conn = db.create_connection('ports.db')
+  conn = db.create_connection('/Users/alexanderdewhirst/ports.db')
   Collect(conn)()

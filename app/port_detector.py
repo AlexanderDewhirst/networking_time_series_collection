@@ -14,6 +14,6 @@ dotenv.load_dotenv()
 #
 
 if __name__ == "__main__":
-  conn = db.create_connection('ports.db')
+  conn = db.create_connection('/Users/alexanderdewhirst/ports.db')
 
   Detect(conn)()
