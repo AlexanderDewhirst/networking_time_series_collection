@@ -1,19 +1,17 @@
 import dotenv
+import argparse
 from db import helpers as db
 from services.detect import Detect
 
 dotenv.load_dotenv()
 
-## Use argparse
-# - database, --d
-#   '/Users/alexanderdewhirst/ports.db'
-# - model, --m
-#   CnnLstmAe
-# - num_rounds_per_batch, --n
-#   60
-#
+parser = argparse.ArgumentParser(description = "Client - Detector component")
+parser.add_argument('-d', '--database', dest = 'database', action = 'store', type = str, help = "Database URL")
+parser.add_argument('-m', '--model', dest = 'model', action = 'store', type = str, help = 'Machine learning model.')
+parser.add_argument('-r', '--batches_per_round', dest = 'batches_per_round', action = 'store', default = 60, type = int, help = 'Batches per round.')
+
+args = parser.parse_args()
 
 if __name__ == "__main__":
-  conn = db.create_connection('/Users/alexanderdewhirst/ports.db')
-
-  Detect(conn)()
+  conn = db.create_connection(args.database)
+  Detect(conn, args.model, args.batches_per_round)()

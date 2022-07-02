@@ -5,10 +5,11 @@ from threads.scanner_thread import ScannerThread
 from threads.sniffer_thread import SnifferThread
 
 class Collect():
-  def __init__(self, conn, round_duration = 60):
+  def __init__(self, conn, round_duration = 60, include_packets = False):
     self.conn = conn
     self.round_start = datetime.now()
     self.round_duration = round_duration
+    self.include_packets = include_packets
 
   def __call__(self):
     round_end = self.round_start + timedelta(0, self.round_duration)
@@ -17,11 +18,13 @@ class Collect():
 
     # Collect network traffic
     thread1 = ScannerThread(self.conn, current_round, round_end)
-    thread2 = SnifferThread(self.conn, current_round, round_end)
     thread1.start()
-    thread2.start()
     thread1.join()
-    thread2.join()
+
+    if self.include_packets == True:
+      thread2 = SnifferThread(self.conn, current_round, round_end)
+      thread2.start()
+      thread2.join()
 
     Log("Round completed successfully")
 

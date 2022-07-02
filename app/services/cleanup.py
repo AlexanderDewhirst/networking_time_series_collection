@@ -16,7 +16,7 @@ class Cleanup():
     delete_rounds_query = """DELETE FROM rounds WHERE id IN %s;"""
     delete_batch_query = """DELETE FROM batches WHERE id != %s;"""
 
-    Log("Deleting stale data - retaining " + str(self.current_batch))
+    Log("Deleting stale data - retaining batch " + str(self.current_batch))
 
     db.delete(self.conn, delete_rounds_ports_query, rounds_to_delete)
     db.delete(self.conn, delete_packets_query, rounds_to_delete)
@@ -24,6 +24,7 @@ class Cleanup():
     db.delete(self.conn, delete_rounds_query, rounds_to_delete)
     db.delete(self.conn, delete_batch_query, self.current_batch)
 
+    Log("Successfully deleted stale data")
 
   def __get_current_batch(self):
     select_batch_query = """SELECT id FROM batches ORDER BY id DESC LIMIT 1;"""

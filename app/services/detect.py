@@ -10,9 +10,9 @@ from services.log import Log
 
 
 class Detect():
-  def __init__(self, conn, num_rounds = 60):
+  def __init__(self, conn, model, num_rounds = 60):
     self.conn = conn
-    self.model = CnnLstmAe()
+    self.model = model or CnnLstmAe()
     self.model_file_path = CnnLstmAe.get_weight_file()
     self.num_rounds = num_rounds
     self.current_batch = self.__create_batch()
