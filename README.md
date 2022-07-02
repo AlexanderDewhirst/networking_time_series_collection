@@ -134,12 +134,6 @@ Develop a server application to support federation and manage client participati
 ### Bayesian Optimization
 Tune model hyperparameters to optimize our model performance.
 
-### Data Cleanup Worker
-Data is retained indefinitely on the host machine (unless the database process is killed) and should be removed after considered stale.
-
-### CLI
-Create a CLI tool to allow for specific use cases.
-
 ### Data Security
 Use and secure credentials for the client application to write to the database on the host machine.
 
