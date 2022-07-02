@@ -56,9 +56,9 @@ crontab -e
 ```
 and use the following syntax to schedule the job. Cron requires the global path to find the file.
 ```
-*/1 * * * * python3 app/port_collector.py
-0 * * * * python3 app/port_detector.py
-0 0 * * * python3 app/port_cleanup.py
+*/1 * * * * python3 app/port_collector.py -d ports.db -r 60 -p
+0 * * * * python3 app/port_detector.py -d ports.db -r 60
+0 0 * * * python3 app/port_cleanup.py -d ports.db
 ```
 and all files are executable (ex. `chmod +x app/port_collector.py`).
 
@@ -123,6 +123,9 @@ The Python library `matplotlib` is a plotting library that allows us to visualiz
 
 ### Python Dotenv
 The Python library `python-dotenv` loads environment variables necessary for development.
+
+### argparse
+The Python library `argparse` from the Python standard library is used to supply values from the cron scheduler.
 
 ## Future State
 ### Federation
