@@ -21,7 +21,7 @@ class Detect():
     rounds = self.__get_rounds()
     self.__create_batch_rounds(rounds)
 
-    Log("Batch " + str(self.current_batch) + " starting - rounds [" + str(rounds[0]) + ' - ' + str(rounds[-1]) + ']')
+    Log("Batch " + str(self.current_batch) + " starting - rounds [" + str(rounds[-1]) + ' - ' + str(rounds[0]) + ']')
 
     port_usage = self.__get_port_usage(rounds)
 
