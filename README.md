@@ -7,7 +7,7 @@ This application collects local port and network packet time series data, stores
 ## Architecture
 The application collects network traffic and detects anomalies in port occupancy using cron jobs.
 
-The network traffic collector scans for port occupancy and streams network packets on the `en0` interface. Jobs run every minute, with each storing port usage and network packets in an in-process database. For each round, two classes overriding an instance of `threading.Thread` in the directory `/threads` (`ScannerThread` and `SnifferThread`) are called. These call the respective services in directory `/services` (`Scanner` and `Sniffer`). Each Thread class then stores the data in the SQLite3 database.
+The network traffic collector scans for port occupancy and streams network packets on the `en0` interface. Jobs run every minute, with each storing port usage and network packets in an in-process database. For each round, two threads are spun off the main thread, calling their respective services to scan ports and stream network packets to store in the database.
 
 ![Client - Collector](/docs/collector.png)
 
