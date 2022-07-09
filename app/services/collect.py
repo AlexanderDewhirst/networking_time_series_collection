@@ -29,6 +29,8 @@ class Collect():
     Log("Round completed successfully")
 
   def __create_round(self):
+    # TODO: API request
+    #   BatchService - POST /projects/{id}/rounds
     insert_round_query = """INSERT INTO rounds(start_time) values (?);"""
     db.insert(self.conn, insert_round_query, (str(self.round_start.isoformat()),))
 

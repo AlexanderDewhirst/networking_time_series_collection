@@ -146,6 +146,8 @@ class Detect():
     return db.select(self.conn, "SELECT port_id, timestamp, round_id FROM rounds_ports WHERE round_id IN %s;", str(rounds))
 
   def __create_batch(self):
+    # TODO: API request
+    #   BatchService - POST /projects/{id}/batches
     insert_batch_query = """INSERT INTO batches(timestamp, alg) VALUES (?, ?);"""
     db.insert(self.conn, insert_batch_query, (datetime.now().isoformat(), self.model.__name__()))
 
@@ -160,5 +162,7 @@ class Detect():
         self.current_batch,
         str(round)
       ))
+
+    # TODO: Handled by BatchService - on create_batch
     insert_batch_rounds_query = """INSERT INTO batches_rounds(batch_id, round_id) VALUES (?, ?);"""
     db.insert_many(self.conn, insert_batch_rounds_query, rounds_params)

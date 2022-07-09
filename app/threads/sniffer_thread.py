@@ -27,6 +27,8 @@ class SnifferThread(threading.Thread):
           self.current_round,
         ))
 
+    # TODO: Handle structg corresponding to round data
+    #   BatchService - PUT /projects/{id}/rounds/{id}
     insert_packets_query = """
       INSERT INTO packets(
         timestamp, protocols, qry_name, resp_name,

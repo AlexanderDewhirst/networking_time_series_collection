@@ -23,6 +23,8 @@ class ScannerThread(threading.Thread):
           datetime.now(),
         ))
 
+      # TODO: Handle struct corresponding to round data
+      #   BatchService - PUT /projects/{id}/rounds/{id}
       insert_rounds_ports_query = """INSERT INTO rounds_ports(round_id, port_id, timestamp) VALUES (?, ?, ?)"""
       db.insert_many(self.conn, insert_rounds_ports_query, round_port_params)
 
