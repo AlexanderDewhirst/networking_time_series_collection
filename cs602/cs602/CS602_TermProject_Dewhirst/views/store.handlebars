@@ -1,0 +1,57 @@
+<h3>Store {{store.address}}</h3>
+<h4>Owned by {{owner.first_name}} {{owner.last_name}}</h4>
+
+<div>
+  <h4>Products</h4>
+  <div class="table-responsive">
+		<table class="table table-condensed">
+			{{#if products}}
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Description</th>
+            <th>Amount</th>
+            <th>Price</th>
+            <th></th>
+          </tr>
+        </thead>
+			{{else}}
+			  <tr><td colspan="3">No Products found.</td></tr>
+			{{/if}}
+			<tbody>
+				{{#each products}}
+					<tr>
+            <td>{{this.id}}</td>
+						<td>{{this.name}}</td>
+            <td>{{this.description}}.</td>
+            <td>{{this.amount}}</td>
+            <td>${{this.price}}</td>
+
+						{{#if (isOwner ../user.user_type)}}
+            	<td>
+								<form method="post" action="/owners/{{../owner.id}}/stores/{{../store.id}}/products/{{this.id}}/delete"></form>
+									<button><a href="/owners/{{../user.id}}/stores/{{../store.id}}/products/{{this.id}}">Edit</a></button> |
+									<button type="submit" class="btn-link">Delete</button>
+								</form>
+							</td>
+						{{/if}}
+					</tr>
+				{{/each}}
+			</tbody>
+			<tfooter>
+				<tr>
+					{{#if (isOwner user.user_type)}}
+						<td>
+							<a href="/owners/{{user.id}}/stores/{{store.id}}/newProduct">Add</a> |
+							<a href="/owners/{{user.id}}">Back</a>
+						</td>
+					{{/if}}
+					{{#if (isAdmin user.user_type)}}
+						<td><a href="/administrators/{{user.id}}">Back</a></td>
+					{{/if}}
+				</tr>
+			</tfooter>
+		</table>
+	</div>
+</div>

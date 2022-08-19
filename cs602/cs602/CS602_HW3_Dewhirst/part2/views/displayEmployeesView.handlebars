@@ -1,0 +1,35 @@
+<div>
+	<div class="table-responsive">
+		<table class="table table-condensed">
+			{{#if data}}
+			<thead>
+				<tr>
+					<th>First Name</th>
+					<th>Last Name</th>
+					<th></th>
+				</tr>
+			</thead>
+			{{else}}
+			<tr><td colspan="3">No Employees found ... Add One!</td></tr>
+			{{/if}}
+			<tbody>
+				{{#each data}}
+					<tr>
+						<td>{{this.firstName}}</td>
+						<td>{{this.lastName}}</td>
+						</td>
+						<td>
+							<a href="/employees/edit/{{this.id}}">Edit</a> |
+							<a href="/employees/delete/{{this.id}}">Delete</a>
+						</td>
+					</tr>
+				{{/each}}
+			</tbody>
+			<tfooter>
+				<tr><td>
+				<button class="btn btn-primary" onClick="addEmployee();">Add</button>
+				</td></tr>
+			</tfooter>
+		</table>
+	</div>
+</div>

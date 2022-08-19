@@ -1,0 +1,27 @@
+<div class="table-responsive">
+  <form method="post" action='/employees/delete'>
+    <table class="table table-condensed">
+      <tbody>
+        <tr>
+          <th>First Name: </td>
+          <td>{{data.firstName}}</td>
+        </tr>
+        <tr>
+          <th>Last Name: </td>
+          <td>{{data.lastName}}</td>
+        </tr>
+        <input type="hidden" name="id" value="{{data.id}}">
+
+      </tbody>
+      <tfooter>
+        <tr>
+          <td></td>
+          <td>
+              <input type="submit" value="OK" class="btn btn-success">
+              <input type="button" value="Cancel" class="btn btn-danger" class="cancel" onclick="cancelDelete()">
+          </td>
+        </tr>
+      </tfooter>
+    </table>
+  </form>
+</div>

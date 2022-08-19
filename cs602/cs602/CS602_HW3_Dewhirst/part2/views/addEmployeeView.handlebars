@@ -1,0 +1,25 @@
+ <div class="table-responsive">
+  <form method="POST" action="/employees/add">
+    <table class="table table-condensed">
+      <tbody>
+        <tr>
+          <th>First Name: </th>
+          <td><input type="text" name="fname" placeholder="Enter first name" required /></td>
+        </tr>
+        <tr>
+          <th>Last Name: </th>
+          <td><input type="text" name="lname" placeholder="Enter last name" required /></td>
+        </tr>
+       </tbody>
+      <tfooter>
+        <tr>
+          <td></td>
+          <td>
+            <input type="submit" value="Save" class="btn btn-success" />
+            <input type="button" value="Cancel" class="btn btn-danger" onclick="cancelAdd()">
+          </td>
+        </tr>
+      </tfooter>
+    </table>
+  </form>
+</div>

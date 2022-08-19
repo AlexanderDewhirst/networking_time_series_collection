@@ -1,0 +1,35 @@
+<h3>Product</h3>
+
+<div class="table-responsive">
+  <form method="post" action={{route}}>
+    <table class="table table-condensed">
+      <tbody>
+        <tr>
+          <th>Name: </td>
+          <td><input type="text" name="name" required size="40" value="{{product.name}}"></td>
+        </tr>
+        <tr>
+          <th>Description: </td>
+          <td><input type="text" name="description" required size="40" value="{{product.description}}"></td>
+        </tr>
+        <tr>
+          <th>Amount: </td>
+          <td><input type="text" name="amount" required size="40" value="{{product.amount}}"></td>
+        </tr>
+        <tr>
+          <th>Price: </td>
+          <td><input type="text" name="price" required size="40" value="{{product.price}}"></td>
+        </tr>
+        <input type="hidden" name="id" value="{{product.id}}">
+      </tbody>
+      <tfooter>
+        <tr>
+          <td>
+              <input type="submit" value="Save" class="btn btn-success">
+              <a class='btn btn-default' href="/owners/{{owner.id}}/stores/{{store.id}}">Back</button>
+          </td>
+        </tr>
+      </tfooter>
+    </table>
+  </form>
+</div>

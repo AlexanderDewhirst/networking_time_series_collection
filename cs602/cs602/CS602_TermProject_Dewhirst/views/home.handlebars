@@ -1,0 +1,68 @@
+<h3>Users</h3>
+
+<div>
+  <h4>Administrators</h4>
+	<div class="table-responsive">
+		<table class="table table-condensed">
+			{{#if owners}}
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>First Name</th>
+            <th>Last Name</th>
+            <th></th>
+          </tr>
+        </thead>
+			{{else}}
+			  <tr><td colspan="3">No Administrators found ... Seed database!</td></tr>
+			{{/if}}
+			<tbody>
+				{{#each administrators}}
+					<tr>
+            <td>{{this.id}}</td>
+						<td>{{this.first_name}}</td>
+						<td>{{this.last_name}}</td>
+						<td>
+							<a href="/administrators/{{this.id}}">View</a>
+						</td>
+					</tr>
+				{{/each}}
+			</tbody>
+		</table>
+	</div>
+</div>
+
+<hr>
+
+<div>
+  <h4>Owners</h4>
+	<div class="table-responsive">
+		<table class="table table-condensed">
+			{{#if owners}}
+			<thead>
+				<tr>
+          <th>ID</th>
+					<th>First Name</th>
+					<th>Last Name</th>
+					<th></th>
+				</tr>
+			</thead>
+			{{else}}
+			<tr><td colspan="3">No Owners found ... Seed Database!</td></tr>
+			{{/if}}
+			<tbody>
+				{{#each owners}}
+					<tr>
+            <td>{{this.id}}</td>
+						<td>{{this.first_name}}</td>
+						<td>{{this.last_name}}</td>
+						</td>
+						<td>
+							<a href="/owners/{{this.id}}">View</a>
+						</td>
+					</tr>
+				{{/each}}
+			</tbody>
+		</table>
+	</div>
+</div>

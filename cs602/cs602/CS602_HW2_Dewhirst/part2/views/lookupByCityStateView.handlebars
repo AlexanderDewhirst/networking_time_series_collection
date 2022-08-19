@@ -1,0 +1,10 @@
+<b>Results for {{response.city}} {{ response.state }}</b>
+<p></p>
+<table>
+  {{#each response.data }}
+    <tr>
+      <th style="width: 25%;">ZipCode: <a href="/zip/{{this.zip}}">{{ this.zip }}</a></th>
+      <th style="width: 25%;">Population: {{ this.pop }}</th>
+    </tr>
+  {{/each }}
+</table>

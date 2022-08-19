@@ -1,0 +1,46 @@
+{{#if (isOwner user.user_type)}}
+	<h3>Owner {{user.id}} - {{user.first_name}} {{user.last_name}}</h3>
+{{/if}}
+{{#if (isAdmin user.user_type)}}
+	<h3>Administrator {{user.id}} - {{user.first_name}} {{user.last_name}}</h3>
+{{/if}}
+<div>
+  <h4>Stores</h4>
+  <div class="table-responsive">
+		<table class="table table-condensed">
+			{{#if stores}}
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Address</th>
+            <th></th>
+          </tr>
+        </thead>
+			{{else}}
+			  <tr><td colspan="3">No Stores found.</td></tr>
+			{{/if}}
+			<tbody>
+				{{#each stores}}
+					<tr>
+            <td>{{this.id}}</td>
+						<td>{{this.address}}</td>
+						<td>
+							{{#if (isOwner ../user.user_type)}}
+								<a href="/owners/{{../user.id}}/stores/{{this.id}}">View</a>
+							{{/if}}
+							{{#if (isAdmin ../user.user_type)}}
+								<a href="/administrators/{{../user.id}}/stores/{{this.id}}">View</a>
+							{{/if}}
+						</td>
+
+					</tr>
+				{{/each}}
+			</tbody>
+			<tfooter>
+				<tr>
+					<td><a href="/">Back</a></td>
+				</tr>
+			</tfooter>
+		</table>
+	</div>
+</div>
