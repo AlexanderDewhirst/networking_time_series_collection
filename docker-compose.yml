@@ -1,0 +1,9 @@
+version: "3.8"
+
+services:
+  client:
+    container_name: port_detector_client
+    hostname: port_detector_client
+    build:
+      context: ./
+      dockerfile: Dockerfile

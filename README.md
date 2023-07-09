@@ -74,15 +74,15 @@ The files `collector.log` and `detector.log` are ignored from Git for this purpo
 5. The application will execute without Wireshark and the Sniffer thread streaming network packets to the database. However, we can configure Wireshark to allow execution by cron by modifying the file `dumpcap` path in `config.ini` for `pyshark` within your current Python dependencies (ex. `/usr/local/lib/python3.9/site-packages/pyshark`). The dumpcap path should point to your TShark installation (ex. `dumpcap_path = /Applications/Wireshark.app/Contents/MacOS/tshark`)
 
 
-## Getting Started - Docker (WIP)
-Clone the repository and navigate to the directory of choice. Build the docker image with
+## Getting Started - Docker
+Build the docker image with
 ```
-docker build -t port_monitor .
+docker compose up --build --detach --force-recreate
 ```
 
-We can then start the container using out new image with
+We can then attach to the container with the following
 ```
-docker run -it -d --net=host port_monitor
+docker exec -it <container_id> /bin/bash
 ```
 
 ##### LIMITATIONS

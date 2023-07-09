@@ -18,11 +18,14 @@ class Collect():
 
     # Collect network traffic
     thread1 = ScannerThread(self.conn, current_round, round_end)
-    # thread2 = SnifferThread(self.conn, current_round, round_end)
     thread1.start()
-    # thread2.start()
+
+    # if self.include_packets == True:
+    #   thread2 = SnifferThread(self.conn, current_round, round_end)
+    #   thread2.start()
+    #   thread2.join()
+
     thread1.join()
-    # thread2.join()
 
     Log("Round completed successfully")
 

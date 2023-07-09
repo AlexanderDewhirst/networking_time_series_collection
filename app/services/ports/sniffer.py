@@ -1,4 +1,7 @@
-import pyshark
+try:
+  import pyshark
+except ImportError:
+  print("Unable to import pyshark")
 from datetime import datetime
 
 class Sniffer:
