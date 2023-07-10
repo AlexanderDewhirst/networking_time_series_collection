@@ -37,7 +37,7 @@ class CnnLstmAe(tf.keras.Model):
   @classmethod
   def get_weight_file(self):
     p = os.environ.get('ROOT_PATH') or ''
-    return p + 'app/cnn_lstm_ae-weights.h5'
+    return p + 'cnn_lstm_ae-weights.h5'
 
   def set_model_file(self, model_file):
     self.model_file = model_file

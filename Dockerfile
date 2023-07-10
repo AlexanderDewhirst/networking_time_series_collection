@@ -36,8 +36,7 @@ RUN touch collector.log
 RUN touch detector.log
 
 RUN crontab -e | { cat; echo \
-    "*/1 * * * * echo 'HELLO WORLD' >> /collector.log 2>&1 \
-\n*/1 * * * * /usr/bin/python3 /port_collector.py -d /ports.db -r 60 >> /collector.log 2>&1 \
+"*/1 * * * * /usr/bin/python3 /port_collector.py -d /ports.db -r 60 >> /collector.log 2>&1 \
 \n0 * * * * /usr/bin/python3 /port_detector.py -d /ports.db -r 60 >> /detector.log 2>&1 \
 \n0 0 * * * /usr/bin/python3 /port_cleanup.py -d /ports.db\n"; \
 } | crontab -
