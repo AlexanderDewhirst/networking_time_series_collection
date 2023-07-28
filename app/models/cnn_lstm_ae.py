@@ -2,9 +2,10 @@ import os
 import tensorflow as tf
 
 class CnnLstmAe(tf.keras.Model):
-  def __init__(self, model_file = None):
+  def __init__(self, weights_path, model_file = None):
     super().__init__()
     self.model_file = model_file
+    self.weights_path = weights_path
 
   def __name__(self):
     return "CNN LSTM AE"
@@ -37,7 +38,7 @@ class CnnLstmAe(tf.keras.Model):
   @classmethod
   def get_weight_file(self):
     p = os.environ.get('ROOT_PATH') or '/'
-    return p + 'cnn_lstm_ae-weights.h5'
+    return p + self.weights_path
 
   def set_model_file(self, model_file):
     self.model_file = model_file
