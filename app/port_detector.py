@@ -8,9 +8,10 @@ dotenv.load_dotenv()
 parser = argparse.ArgumentParser(description = "Client - Detector component")
 parser.add_argument('-d', '--database', dest = 'database', action = 'store', type = str, help = "Database URL")
 parser.add_argument('-r', '--batches_per_round', dest = 'batches_per_round', action = 'store', default = 60, type = int, help = 'Batches per round.')
+parser.add_argument('-f', '--weights_path', dest = 'weights_path', action = 'store', type = str, help = "Output file path for trained model weights")
 
 args = parser.parse_args()
 
 if __name__ == "__main__":
   conn = db.create_connection(args.database)
-  Detect(conn, args.batches_per_round)()
+  Detect(conn, args.batches_per_round, args.weights_path)()
